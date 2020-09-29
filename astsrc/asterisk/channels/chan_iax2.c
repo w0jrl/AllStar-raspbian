@@ -10119,6 +10119,93 @@ static void *iax2_process_thread(void *data)
 	return NULL;
 }
 
+// callback function for curl
+static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+	size_t realsize = size * nmemb;
+	struct MemoryStruct *mem = (struct MemoryStruct *)userp;
+
+	char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+	if(!ptr) {
+		return 0;
+	}
+
+	mem->memory = ptr;
+	memcpy(&(mem->memory[mem->size]), contents, realsize);
+	mem->size += realsize;
+	mem->memory[mem->size] = 0;
+
+	return realsize;
+}
+
+static int iax2_do_http_register(struct iax2_registry *reg, char* proto)
+{
+	CURL *curl;
+	struct MemoryStruct chunk;
+	struct curl_slist *hs = NULL;
+	char *request = (char*) malloc(MAX_HTTP_REQUEST_LENGTH);
+	int *rescode;
+	char url[100];
+	int regstate;
+
+	strncpy(request, "{\"data\":{", MAX_HTTP_REQUEST_LENGTH - 1);
+	if(strlen(reg->regport)){
+		strncat(request, "\"port\":", MAX_HTTP_REQUEST_LENGTH - strlen(request)- 1);
+		strncat(request, reg->regport, MAX_HTTP_REQUEST_LENGTH - strlen(request)- 1);
+		strncat(request, ",", MAX_HTTP_REQUEST_LENGTH - strlen(request)- 1);
+	}
+	strncat(request, "\"nodes\":{", MAX_HTTP_REQUEST_LENGTH - strlen(request)- 1);
+	strncat(request, "\"", MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request, reg->username, MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request, "\": {\"node\":\"", MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request, reg->username, MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request, "\",\"passwd\":\"", MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request, reg->secret, MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request, "\",\"remote\":", MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request, "0", MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request, "}", MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	strncat(request,"}}}", MAX_HTTP_REQUEST_LENGTH - strlen(request) - 1);
+	ast_log(LOG_DEBUG,"%s request: %s\n", proto, request);
+
+	curl = curl_easy_init();
+	if(curl) {
+		chunk.memory = malloc(1);
+		chunk.size=0;
+		if(strlen(reg->port)>0)
+			sprintf(url, "%.8s://%.30s:%.5s/%.50s", proto, reg->hostname, reg->port, reg->path);
+		else
+			sprintf(url, "%.8s://%.30s/%.50s", proto, reg->hostname, reg->path);
+		hs = curl_slist_append(hs, "Content-Type:application/json");
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "AllstarClient/1.01");
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, request);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, -1L);
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, hs);
+		curl_easy_setopt(curl, CURLOPT_HEADER, 0L);
+		curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
+		curl_easy_setopt(curl, CURLOPT_POST, 1L);
+		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, 500L);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);
+		curl_easy_perform(curl);
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &rescode);
+		if(strlen(chunk.memory)>MAX_HTTP_RESPONSE_LENGTH)
+			ast_log(LOG_WARNING, "buffer overflow while retrieving response from server\n");
+		curl_easy_cleanup(curl);
+		curl_global_cleanup();
+	}
+	chunk.memory[chunk.size]='\0';
+	ast_log(LOG_DEBUG, "%s response: %s\n", proto, chunk.memory);
+
+	if(strstr(chunk.memory,"successfully registered"))
+		regstate = REG_STATE_REGISTERED;
+	else
+		regstate = REG_STATE_UNREGISTERED;
+	free(chunk.memory);
+	free(request);
+	return regstate;
+}
+
 static int iax2_do_register(struct iax2_registry *reg)
 {
 	struct iax_ie_data ied;

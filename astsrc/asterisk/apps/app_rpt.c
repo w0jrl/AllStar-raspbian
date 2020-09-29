@@ -5964,36 +5964,21 @@ struct ast_module_user *u;
 	sprintf(str,"?node=%s&time=%u&seqno=%u",myrpt->name,(unsigned int) now,seq);
 
 	if (pairs) sprintf(str + strlen(str),"&%s",pairs);
-
-	AST_DECLARE_APP_ARGS(args,
-		AST_APP_ARG(url);
-		AST_APP_ARG(postdata););
-
-	u = ast_module_user_add(chan);
-	if (u) noop;
-
-	sprintf(bstr,"%s%s", astr, str);
-
-	AST_STANDARD_APP_ARGS(args, bstr);
-	if(debug >= 64)
-		ast_log(LOG_NOTICE, "Performing statpost update for node %s. URL %s  Telem Data: %s\n\n", myrpt->name, astr, str);
-
-	if (chan)
-		ast_autoservice_start(chan);
-
-	success=0;
-	if(!curl_internal(&chunk,args.url,args.postdata ))
+	if (!(pid = fork()))
 	{
-		if(chunk.memory)
-		{
-			success=1;
-			chunk.memory[chunk.size] = '\0';
-			if(chunk.memory[chunk.size -1] == 10)
-				chunk.memory[chunk.size -1] = '\0';
-			ast_copy_string(result,chunk.memory,sizeof(result)-1);
-			if(debug >= 128) ast_log(LOG_NOTICE, "Statpost return: %s\n\n", result);
-			ast_free(chunk.memory);
+		curl = curl_easy_init();
+		if(curl) {
+			curl_easy_setopt(curl, CURLOPT_URL, str);
+			curl_easy_setopt(curl, CURLOPT_USERAGENT, "AllstarClient/1.01");
+			curl_easy_perform(curl);
+			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &rescode);
+			curl_easy_cleanup(curl);
+			curl_global_cleanup();
 		}
+		if(*rescode == 200) return;
+		ast_log(LOG_ERROR, "statpost failed\n");
+		perror("asterisk");
+		exit(0);
 	}
 
 	if(!success)
