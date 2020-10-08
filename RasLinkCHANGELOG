@@ -1,3 +1,13 @@
+###fix(chk-packages): Add "-w" switch to "grep" to match words
+>Thu, 8 Oct 2020 03:48:21 -0600
+
+>Author: Jeremy Lincicome [W0JRL](admin@jlappliedtechnologies.com)
+
+The counters for "compress" and "delaycompress" were miscounting because both words were being matched at the same time.
+Signed-off-by: Jeremy Lincicome [W0JRL] <admin@jlappliedtechnologies.com>
+
+
+
 ###fix(chk-packages): Prevent rewriting the logrotate script if the parameters are already up-to-date
 >Thu, 8 Oct 2020 02:42:42 -0600
 
