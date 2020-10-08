@@ -1,3 +1,16 @@
+###feature: Switch to a new version numbering scheme
+>Thu, 8 Oct 2020 00:59:46 -0600
+
+>Author: Jeremy Lincicome [W0JRL](admin@jlappliedtechnologies.com)
+
+The new version numbering format will be:
+YY.MM.P (year year . month month . patch)
+This allows for flexibility in the RasLink release schedule.
+
+Signed-off-by: Jeremy Lincicome [W0JRL] <admin@jlappliedtechnologies.com>
+
+
+
 ###rewrite(changelog-generator): Update output formatting
 >Wed, 7 Oct 2020 21:09:46 -0600
 
