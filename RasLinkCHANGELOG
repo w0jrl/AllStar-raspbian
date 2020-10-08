@@ -1,3 +1,12 @@
+###fix(app_rpt): Remove the letters from the front of the version number
+>Thu, 8 Oct 2020 01:45:22 -0600
+
+>Author: Jeremy Lincicome [W0JRL](admin@jlappliedtechnologies.com)
+
+Signed-off-by: Jeremy Lincicome [W0JRL] <admin@jlappliedtechnologies.com>
+
+
+
 ###feature: Switch to a new version numbering scheme
 >Thu, 8 Oct 2020 00:59:46 -0600
 
