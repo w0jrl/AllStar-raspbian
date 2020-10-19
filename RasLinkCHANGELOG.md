@@ -1,3 +1,13 @@
+## rewrite(app_rpt): Set "ASL_STATPOST_URL" to <http://stats.allstarlink.org/uhandler.php>
+>Mon Oct 19 03:42:42 2020 -0600
+
+>Author: Jeremy Lincicome [W0JRL](admin@jlappliedtechnologies.com)
+
+We shouldn't rely on stats-mco always being online.
+
+Signed-off-by: Jeremy Lincicome [W0JRL] <admin@jlappliedtechnologies.com>
+
+
 ## Revert "rewrite(app_rpt): set "ASL_STATPOST_URL" to <http://stats.allstarlink.org/uhandler.php>"
 >Mon Oct 19 03:35:25 2020 -0600
 
