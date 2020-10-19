@@ -1,3 +1,12 @@
+## Revert "rewrite(app_rpt): set "ASL_STATPOST_URL" to <http://stats.allstarlink.org/uhandler.php>"
+>Mon Oct 19 03:35:25 2020 -0600
+
+>Author: Jeremy Lincicome [W0JRL](admin@jlappliedtechnologies.com)
+
+Fix commit msg
+This reverts commit 0b63578d1e12c267146e102200406c82e7f94d52.
+
+
 ## rewrite(app_rpt): set "ASL_STATPOST_URL" to <http://stats.allstarlink.org/uhandler.php>
 >Sun Oct 18 23:53:12 2020 -0600
 
