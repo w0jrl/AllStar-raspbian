@@ -1,3 +1,11 @@
+## No hangtime when sending beacon ID
+>Tue Dec 8 09:47:41 2020 -0700
+
+>Author: JimZAH <james@colderwood.com>
+
+Signed-off-by: JimZAH <james@colderwood.com>
+
+
 ## license(*): Update copyright for scripts and service units
 >Mon Dec 7 04:39:44 2020 -0700
 
