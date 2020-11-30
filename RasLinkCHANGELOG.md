@@ -1,3 +1,11 @@
+## bugfix(release-upgrade.sh): Fix the test condition for the prompt function
+>Mon Nov 30 01:23:46 2020 -0700
+
+>Author: Jeremy Lincicome [W0JRL] <admin@jlappliedtechnologies.com>
+
+Signed-off-by: Jeremy Lincicome [W0JRL] <admin@jlappliedtechnologies.com>
+
+
 ## release(Stretch): Upgrade RasLink servers to Raspbian Stretch
 >Wed Nov 25 16:48:19 2020 -0700
 
