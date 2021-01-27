@@ -1,3 +1,11 @@
+## chore(zram*): Remove block devices before system shutdown
+>Wed Jan 27 13:25:45 2021 -0700
+
+>Author: Jeremy Lincicome [W0JRL] <admin@jlappliedtechnologies.com>
+
+Signed-off-by: Jeremy Lincicome [W0JRL] <admin@jlappliedtechnologies.com>
+
+
 ## refactor(zram.sh): Use Perl instead of bc to calculate the block device size
 >Sat Jan 23 21:50:05 2021 -0700
 
